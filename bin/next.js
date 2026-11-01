@@ -32,3 +32,4 @@ if (command === 'build') {
   });
   process.exit(result.status ?? 0);
 }
+
