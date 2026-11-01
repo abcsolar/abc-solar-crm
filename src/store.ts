@@ -92,8 +92,31 @@ function getInitialData(): StoreData {
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
+        let storedLeads: Lead[] = Array.isArray(parsed.leads) ? parsed.leads : [];
+
+        // Ensure all 20 seed leads (including Harvey AI leads) are present
+        const hasAllSeedLeads = SEED_LEADS.every(seedLead =>
+          storedLeads.some(sl => sl.id === seedLead.id || sl.phone === seedLead.phone)
+        );
+
+        if (storedLeads.length < 20 || !hasAllSeedLeads) {
+          const existingIds = new Set(storedLeads.map(l => l.id));
+          const existingPhones = new Set(storedLeads.map(l => l.phone));
+          const missing = SEED_LEADS.filter(sl => !existingIds.has(sl.id) && !existingPhones.has(sl.phone));
+          storedLeads = [...storedLeads, ...missing];
+
+          if (storedLeads.length < 20) {
+            storedLeads = [...SEED_LEADS];
+          }
+
+          try {
+            parsed.leads = storedLeads;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+          } catch {}
+        }
+
         return {
-          leads: parsed.leads || SEED_LEADS,
+          leads: storedLeads,
           quotations: parsed.quotations || SEED_QUOTATIONS,
           surveys: parsed.surveys || SEED_SURVEYS,
           conversations: parsed.conversations || SEED_CONVERSATIONS,
@@ -109,7 +132,7 @@ function getInitialData(): StoreData {
     }
   }
   return {
-    leads: SEED_LEADS,
+    leads: [...SEED_LEADS],
     quotations: SEED_QUOTATIONS,
     surveys: SEED_SURVEYS,
     conversations: SEED_CONVERSATIONS,
@@ -464,7 +487,7 @@ export function resetStore() {
     localStorage.removeItem(NOTIFS_KEY);
   }
   data = {
-    leads: SEED_LEADS,
+    leads: [...SEED_LEADS],
     quotations: SEED_QUOTATIONS,
     surveys: SEED_SURVEYS,
     conversations: SEED_CONVERSATIONS,
