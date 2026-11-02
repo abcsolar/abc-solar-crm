@@ -50,12 +50,14 @@ export function PipelinePage({ onNavigate }: CRMPageProps) {
       .reduce((sum, l) => sum + (l.dealValue || 0), 0);
   }, [uniqueLeads]);
 
-  // Group deduplicated leads into columns
+  // Group deduplicated leads into columns (sorted newest first)
   const columns = useMemo(() => {
     return PIPELINE_STAGES.map(status => ({
       status,
       meta: getStatusMeta(status),
-      leads: uniqueLeads.filter(l => l.status === status),
+      leads: uniqueLeads
+        .filter(l => l.status === status)
+        .sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()),
     }));
   }, [uniqueLeads]);
 

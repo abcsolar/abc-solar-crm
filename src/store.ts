@@ -109,10 +109,16 @@ function getInitialData(): StoreData {
             storedLeads = [...SEED_LEADS];
           }
 
+          // Sort descending by creation date so new/ingested leads sit at top
+          storedLeads.sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
+
           try {
             parsed.leads = storedLeads;
             localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
           } catch {}
+        } else {
+          // Keep existing leads sorted descending by creation date
+          storedLeads.sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
         }
 
         return {
@@ -169,7 +175,11 @@ export function useStore() {
 
 // Lead actions
 export function addLead(lead: Lead) {
-  data = { ...data, leads: [lead, ...data.leads] };
+  const leadWithTimestamp: Lead = {
+    ...lead,
+    createdAt: lead.createdAt || new Date().toISOString(),
+  };
+  data = { ...data, leads: [leadWithTimestamp, ...data.leads] };
   emit();
 }
 

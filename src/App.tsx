@@ -40,6 +40,40 @@ function getWebsitePageFromPath(path: string): string {
   return 'home';
 }
 
+const VALID_CRM_PAGES = [
+  'dashboard', 'leads', 'pipeline', 'quotations', 'surveys', 'whatsapp', 'projects', 'settings'
+];
+
+function getCrmPageFromUrlAndStorage(): string {
+  if (typeof window === 'undefined') return 'dashboard';
+
+  // 1. Check path e.g. /admin/leads, /crm/settings
+  const pathParts = window.location.pathname.replace(/^\//, '').split('/');
+  if (pathParts.length >= 2 && (pathParts[0] === 'admin' || pathParts[0] === 'crm')) {
+    const pageInPath = pathParts[1].toLowerCase();
+    if (VALID_CRM_PAGES.includes(pageInPath)) return pageInPath;
+  }
+
+  // 2. Check search params: ?page=leads or ?tab=leads
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const qPage = params.get('page') || params.get('tab') || params.get('crm_page');
+    if (qPage && VALID_CRM_PAGES.includes(qPage.toLowerCase())) {
+      return qPage.toLowerCase();
+    }
+  } catch {}
+
+  // 3. Check localStorage
+  try {
+    const saved = localStorage.getItem('admin_active_tab');
+    if (saved && VALID_CRM_PAGES.includes(saved)) {
+      return saved;
+    }
+  } catch {}
+
+  return 'dashboard';
+}
+
 function App() {
   const [view, setView] = useState<AppView>(() =>
     getViewFromPath(typeof window !== 'undefined' ? window.location.pathname : '/')
@@ -47,7 +81,7 @@ function App() {
   const [websitePage, setWebsitePage] = useState(() =>
     getWebsitePageFromPath(typeof window !== 'undefined' ? window.location.pathname : '/')
   );
-  const [crmPage, setCrmPage] = useState('dashboard');
+  const [crmPage, setCrmPage] = useState<string>(() => getCrmPageFromUrlAndStorage());
   const session = useAuth();
 
   // Handle browser back/forward buttons
@@ -59,11 +93,27 @@ function App() {
       setView(newView);
       if (newView === 'website') {
         setWebsitePage(getWebsitePageFromPath(currentPath));
+      } else if (newView === 'crm') {
+        setCrmPage(getCrmPageFromUrlAndStorage());
       }
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
+
+  // Sync active CRM sub-route in URL and storage
+  useEffect(() => {
+    if (view === 'crm' && typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('admin_active_tab', crmPage);
+      } catch {}
+      const currentPath = window.location.pathname;
+      const targetPath = `/admin/${crmPage}`;
+      if (currentPath !== targetPath && !currentPath.startsWith(`/crm/${crmPage}`)) {
+        window.history.replaceState(null, '', targetPath + window.location.search);
+      }
+    }
+  }, [crmPage, view]);
 
   function navigateToView(newView: AppView, path: string) {
     if (typeof window !== 'undefined' && window.location.pathname !== path) {
@@ -85,6 +135,15 @@ function App() {
 
   function navigateCrm(page: string) {
     setCrmPage(page);
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('admin_active_tab', page);
+      } catch {}
+      const targetPath = `/admin/${page}`;
+      if (window.location.pathname !== targetPath) {
+        window.history.pushState(null, '', targetPath);
+      }
+    }
   }
 
   function handleLogout() {
@@ -96,11 +155,12 @@ function App() {
   if (view === 'staff-login') {
     if (session) {
       // Already authenticated -> auto-redirect to admin
-      navigateToView('crm', '/admin');
+      const target = getCrmPageFromUrlAndStorage();
+      navigateToView('crm', `/admin/${target}`);
       return null;
     }
     return (
-      <StaffLoginPage onSuccess={() => navigateToView('crm', '/admin')} />
+      <StaffLoginPage onSuccess={() => navigateToView('crm', `/admin/${getCrmPageFromUrlAndStorage()}`)} />
     );
   }
 

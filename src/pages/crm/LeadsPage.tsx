@@ -70,15 +70,24 @@ export function LeadsPage({ onNavigate }: CRMPageProps) {
     });
   }, [leads]);
 
+  // Sort descending by creation date so new/ingested leads are always at the top
+  const sortedLeads = useMemo(() => {
+    return [...uniqueLeads].sort((a, b) => {
+      const timeA = new Date(a.createdAt || 0).getTime();
+      const timeB = new Date(b.createdAt || 0).getTime();
+      return timeB - timeA; // Most recent on top
+    });
+  }, [uniqueLeads]);
+
   const filteredLeads = useMemo(() => {
-    return uniqueLeads.filter(l => {
+    return sortedLeads.filter(l => {
       if (search && !l.name.toLowerCase().includes(search.toLowerCase()) && !l.phone.includes(search)) return false;
       if (statusFilter !== 'ALL' && l.status !== statusFilter) return false;
       if (districtFilter !== 'ALL' && l.district !== districtFilter) return false;
       if (priorityFilter !== 'ALL' && l.priority !== priorityFilter) return false;
       return true;
     });
-  }, [uniqueLeads, search, statusFilter, districtFilter, priorityFilter]);
+  }, [sortedLeads, search, statusFilter, districtFilter, priorityFilter]);
 
   return (
     <div className="animate-fade-in space-y-5">

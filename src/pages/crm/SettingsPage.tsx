@@ -47,27 +47,103 @@ export function SettingsPage({ onNavigate: _onNavigate }: CRMPageProps) {
   const { whatsappConfig, aiCallingConfig, callLogs, leads, quotations, surveys, projects, tickets } = store;
   const allUsers = useUsers();
 
-  // Active Tab with LocalStorage persistence
+  // Active Tab with LocalStorage and URL persistence
   const [activeTab, setActiveTab] = useState<SettingsTab>(() => {
-    if (typeof localStorage !== 'undefined') {
-      const saved = localStorage.getItem('abc_solar_settings_tab');
-      if (saved && ['team', 'integrations', 'ai-calling', 'company', 'system'].includes(saved)) {
-        return saved as SettingsTab;
+    if (typeof window !== 'undefined') {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const urlTab = params.get('tab') || params.get('settings_tab');
+        if (urlTab && ['team', 'integrations', 'ai-calling', 'company', 'system'].includes(urlTab)) {
+          return urlTab as SettingsTab;
+        }
+      } catch {}
+      if (typeof localStorage !== 'undefined') {
+        const saved = localStorage.getItem('abc_solar_settings_tab');
+        if (saved && ['team', 'integrations', 'ai-calling', 'company', 'system'].includes(saved)) {
+          return saved as SettingsTab;
+        }
       }
     }
     return 'team';
   });
 
+  const [integrationsSubTab, setIntegrationsSubTab] = useState<IntegrationsSubTab>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const urlSubTab = params.get('subtab') || params.get('sub_tab');
+        if (urlSubTab && ['whatsapp', 'harvey', 'webhooks'].includes(urlSubTab)) {
+          return urlSubTab as IntegrationsSubTab;
+        }
+      } catch {}
+      if (typeof localStorage !== 'undefined') {
+        const saved = localStorage.getItem('abc_solar_settings_subtab');
+        if (saved && ['whatsapp', 'harvey', 'webhooks'].includes(saved)) {
+          return saved as IntegrationsSubTab;
+        }
+      }
+    }
+    return 'whatsapp';
+  });
+
   function handleTabChange(tab: SettingsTab) {
     setActiveTab(tab);
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('abc_solar_settings_tab', tab);
+    if (typeof window !== 'undefined') {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('abc_solar_settings_tab', tab);
+      }
+      try {
+        const url = new URL(window.location.href);
+        url.searchParams.set('tab', tab);
+        if (tab !== 'integrations') {
+          url.searchParams.delete('subtab');
+          url.searchParams.delete('sub_tab');
+        }
+        window.history.replaceState(null, '', url.pathname + url.search);
+      } catch {}
     }
   }
 
+  function handleSubTabChange(subTab: IntegrationsSubTab) {
+    setIntegrationsSubTab(subTab);
+    if (typeof window !== 'undefined') {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('abc_solar_settings_subtab', subTab);
+      }
+      try {
+        const url = new URL(window.location.href);
+        url.searchParams.set('tab', 'integrations');
+        url.searchParams.set('subtab', subTab);
+        window.history.replaceState(null, '', url.pathname + url.search);
+      } catch {}
+    }
+  }
+
+  // Synchronize URL query params
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const url = new URL(window.location.href);
+        let changed = false;
+        if (url.searchParams.get('tab') !== activeTab) {
+          url.searchParams.set('tab', activeTab);
+          changed = true;
+        }
+        if (activeTab === 'integrations') {
+          if (url.searchParams.get('subtab') !== integrationsSubTab) {
+            url.searchParams.set('subtab', integrationsSubTab);
+            changed = true;
+          }
+        }
+        if (changed) {
+          window.history.replaceState(null, '', url.pathname + url.search);
+        }
+      } catch {}
+    }
+  }, [activeTab, integrationsSubTab]);
+
   // Copy feedback state
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
-  const [integrationsSubTab, setIntegrationsSubTab] = useState<IntegrationsSubTab>('whatsapp');
   function handleCopy(text: string, key: string) {
     if (typeof navigator !== 'undefined' && navigator.clipboard) {
       navigator.clipboard.writeText(text);
@@ -160,18 +236,34 @@ export function SettingsPage({ onNavigate: _onNavigate }: CRMPageProps) {
     }
   }
 
-  // Fetch initial daemon state from backend
+  // Fetch initial daemon state from backend or rehydrate backend from persisted preference
   useEffect(() => {
+    const savedActive = typeof localStorage !== 'undefined' ? localStorage.getItem('harvey_daemon_active') : null;
+    const savedInterval = typeof localStorage !== 'undefined' ? localStorage.getItem('harvey_daemon_interval') : null;
+
     fetch('/api/harvey/daemon')
       .then(res => res.json())
       .then(data => {
-        if (typeof data?.isDaemonActive === 'boolean') {
+        if (data?.isDaemonActive === true) {
+          setIsDaemonActive(true);
+          localStorage.setItem('harvey_daemon_active', 'true');
+          if (data?.interval) {
+            setDaemonInterval(data.interval);
+            localStorage.setItem('harvey_daemon_interval', data.interval);
+          }
+        } else if (savedActive === 'true') {
+          // Keep active locally and re-sync backend
+          setIsDaemonActive(true);
+          fetch('/api/harvey/daemon', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'start',
+              interval: savedInterval || daemonInterval,
+            }),
+          }).catch(() => {});
+        } else if (typeof data?.isDaemonActive === 'boolean') {
           setIsDaemonActive(data.isDaemonActive);
-          localStorage.setItem('harvey_daemon_active', String(data.isDaemonActive));
-        }
-        if (data?.interval) {
-          setDaemonInterval(data.interval);
-          localStorage.setItem('harvey_daemon_interval', data.interval);
         }
       })
       .catch(() => {});
@@ -722,7 +814,7 @@ export function SettingsPage({ onNavigate: _onNavigate }: CRMPageProps) {
           <div className="flex items-center gap-1.5 p-1 bg-slate-100/90 rounded-xl border border-slate-200/80 w-fit">
             <button
               type="button"
-              onClick={() => setIntegrationsSubTab('whatsapp')}
+              onClick={() => handleSubTabChange('whatsapp')}
               className={cn(
                 'flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer',
                 integrationsSubTab === 'whatsapp'
@@ -739,7 +831,7 @@ export function SettingsPage({ onNavigate: _onNavigate }: CRMPageProps) {
 
             <button
               type="button"
-              onClick={() => setIntegrationsSubTab('harvey')}
+              onClick={() => handleSubTabChange('harvey')}
               className={cn(
                 'flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer',
                 integrationsSubTab === 'harvey'
@@ -756,7 +848,7 @@ export function SettingsPage({ onNavigate: _onNavigate }: CRMPageProps) {
 
             <button
               type="button"
-              onClick={() => setIntegrationsSubTab('webhooks')}
+              onClick={() => handleSubTabChange('webhooks')}
               className={cn(
                 'flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer',
                 integrationsSubTab === 'webhooks'
