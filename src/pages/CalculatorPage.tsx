@@ -9,6 +9,7 @@ import { calculateSolar, calculateSolarByKw, formatINR, getDiscomForDistrict } f
 import type { SolarCalcResult } from '@/utils';
 import { ingestCalculatorLead } from '@/services/leadIngestion';
 import { useLanguage } from '@/i18n/LanguageContext';
+import { SEOHead } from '@/components/SEOHead';
 import confetti from 'canvas-confetti';
 
 type CalcMode = 'bill' | 'capacity';
@@ -83,8 +84,31 @@ export function CalculatorPage({ onNavigate }: { onNavigate: (page: string) => v
 
   const billPresets = [2500, 4500, 7000, 10000, 15000];
 
+  const calculatorSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: 'ABC Solar Rooftop & Subsidy Calculator Uttar Pradesh',
+    applicationCategory: 'UtilityApplication, BusinessApplication',
+    operatingSystem: 'All',
+    url: 'https://abcsolar.in/calculator',
+    description:
+      'Interactive PM Surya Ghar solar rooftop capacity, cost, and central & state UPNEDA subsidy calculator for residential and commercial connections in UP.',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'INR',
+    },
+  };
+
   return (
     <div className="animate-fade-in bg-slate-50 min-h-screen">
+      <SEOHead
+        title="Solar Rooftop Calculator & Subsidy Estimator UP | ABC Solar"
+        description="Calculate your rooftop solar capacity, monthly electricity bill savings, and PM Surya Ghar government subsidy (up to ₹1,08,000) for Uttar Pradesh homes & businesses."
+        canonical="https://abcsolar.in/calculator"
+        keywords="solar calculator UP, rooftop solar subsidy calculator, PM Surya Ghar subsidy estimate, solar ROI calculator Uttar Pradesh, 3kW solar system cost Barabanki Lucknow"
+        schemas={[calculatorSchema]}
+      />
       {/* Hero Header */}
       <section className="bg-slate-950 text-white py-14 relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(#F59E0B_1px,transparent_1px)] [background-size:24px_24px] opacity-15 pointer-events-none" />
@@ -163,6 +187,7 @@ export function CalculatorPage({ onNavigate }: { onNavigate: (page: string) => v
                   step="200"
                   value={monthlyBill}
                   onChange={e => setMonthlyBill(Number(e.target.value))}
+                  aria-label="Monthly Electricity Bill Range Slider in Rupees"
                   className="w-full accent-solar-500 cursor-pointer h-2 bg-slate-200 rounded-lg"
                 />
                 {/* Quick Presets */}
@@ -201,6 +226,7 @@ export function CalculatorPage({ onNavigate }: { onNavigate: (page: string) => v
                   step="1"
                   value={systemKw}
                   onChange={e => setSystemKw(Number(e.target.value))}
+                  aria-label="Target Solar Capacity in Kilowatts"
                   className="w-full accent-solar-500 cursor-pointer h-2 bg-slate-200 rounded-lg"
                 />
                 <div className="flex justify-between text-xs text-slate-400 font-semibold">
@@ -228,6 +254,7 @@ export function CalculatorPage({ onNavigate }: { onNavigate: (page: string) => v
                 step="50"
                 value={roofArea}
                 onChange={e => handleRoofAreaChange(Number(e.target.value))}
+                aria-label="Available Shadow-Free Roof Area in Square Feet"
                 className="w-full accent-solar-500 cursor-pointer h-2 bg-slate-200 rounded-lg"
               />
               <div className="flex items-center justify-between text-xs text-slate-400">

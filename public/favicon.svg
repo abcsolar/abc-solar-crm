@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="sunGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F59E0B" />
+      <stop offset="100%" stop-color="#D97706" />
+    </linearGradient>
+    <linearGradient id="panelGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F766E" />
+      <stop offset="100%" stop-color="#064E3B" />
+    </linearGradient>
+  </defs>
+  <!-- Background circle -->
+  <circle cx="50" cy="50" r="48" fill="#090D16" />
+  <!-- Radiant Sun in Corner -->
+  <circle cx="50" cy="28" r="14" fill="url(#sunGrad)" />
+  <g stroke="#F59E0B" stroke-width="3" stroke-linecap="round">
+    <line x1="50" y1="8" x2="50" y2="2" />
+    <line x1="65" y1="17" x2="70" y2="13" />
+    <line x1="35" y1="17" x2="30" y2="13" />
+    <line x1="70" y1="28" x2="76" y2="28" />
+    <line x1="30" y1="28" x2="24" y2="28" />
+  </g>
+  <!-- Solar Panel Grid Matrix -->
+  <path d="M 22 55 L 78 55 L 85 86 L 15 86 Z" fill="url(#panelGrad)" stroke="#38BDF8" stroke-width="2" />
+  <!-- Panel Grid Lines -->
+  <line x1="50" y1="55" x2="50" y2="86" stroke="#38BDF8" stroke-width="2" />
+  <line x1="36" y1="55" x2="32" y2="86" stroke="#38BDF8" stroke-width="1.5" />
+  <line x1="64" y1="55" x2="68" y2="86" stroke="#38BDF8" stroke-width="1.5" />
+  <line x1="18" y1="70" x2="82" y2="70" stroke="#38BDF8" stroke-width="1.5" />
+</svg>

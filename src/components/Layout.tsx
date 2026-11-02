@@ -70,11 +70,13 @@ export function WebsiteNav({ currentPage, onNavigate }: { currentPage: string; o
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-16 sm:h-20">
           {/* Logo with official company brand */}
-          <button onClick={() => onNavigate('home')} className="flex items-center gap-2.5 sm:gap-3.5 shrink-0 text-left group">
+          <button onClick={() => onNavigate('home')} className="flex items-center gap-2.5 sm:gap-3.5 shrink-0 text-left group" aria-label="Go to ABC Solar Homepage">
             <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-white border border-slate-200/80 shadow-sm p-1 flex items-center justify-center shrink-0 group-hover:scale-105 transition-all">
               <img
                 src="/logo.jpg"
-                alt="A.B.C. Solar Solution"
+                alt="ABC Solar - Avadh Boring Company Official Logo"
+                width={48}
+                height={48}
                 className="w-full h-full object-contain"
               />
             </div>
@@ -404,7 +406,7 @@ export function FloatingWhatsApp() {
         <div className="absolute bottom-16 right-0 bg-white rounded-2xl shadow-2xl border border-slate-200 p-4 w-[calc(100vw-2.5rem)] max-w-xs animate-slide-up">
           <div className="flex items-center gap-2 mb-2 pb-2 border-b border-slate-100">
             <div className="w-7 h-7 rounded-lg bg-white p-0.5 border border-slate-200 flex items-center justify-center">
-              <img src="/logo.jpg" alt="Logo" className="w-full h-full object-contain" />
+              <img src="/logo.jpg" alt="ABC Solar Representative" width={28} height={28} className="w-full h-full object-contain" />
             </div>
             <div>
               <p className="font-bold text-slate-900 text-xs">{t('waTitle')}</p>
@@ -419,6 +421,7 @@ export function FloatingWhatsApp() {
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 bg-emerald-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-emerald-700 transition-colors w-full justify-center shadow-md shadow-emerald-700/20"
+            aria-label="Send WhatsApp message to ABC Solar"
           >
             <MessageCircle size={15} /> {t('waBtn')}
           </a>
@@ -429,7 +432,7 @@ export function FloatingWhatsApp() {
         onMouseLeave={() => setShow(false)}
         onClick={() => window.open(`https://wa.me/${COMPANY.whatsapp}?text=${encodeURIComponent(t('waDefaultMsg'))}`, '_blank')}
         className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-emerald-600 hover:bg-emerald-700 shadow-xl hover:shadow-2xl transition-all flex items-center justify-center text-white animate-float cursor-pointer"
-        aria-label="WhatsApp"
+        aria-label="Chat on WhatsApp with ABC Solar Engineer"
       >
         <MessageCircle size={24} className="sm:hidden" />
         <MessageCircle size={28} className="hidden sm:block" />
@@ -450,7 +453,7 @@ export function Footer({ onNavigate }: { onNavigate: (page: string) => void }) {
         <div className="space-y-4">
           <div className="flex items-center gap-3.5">
             <div className="w-12 h-12 rounded-2xl bg-white p-1 flex items-center justify-center shrink-0 shadow-lg">
-              <img src="/logo.jpg" alt="A.B.C. Solar Solution" className="w-full h-full object-contain" />
+              <img src="/logo.jpg" alt="ABC Solar Solution - Avadh Boring Company" width={48} height={48} loading="lazy" className="w-full h-full object-contain" />
             </div>
             <div>
               <div className="font-display font-black text-white text-lg tracking-tight leading-tight">ABC SOLAR</div>

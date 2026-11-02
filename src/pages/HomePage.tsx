@@ -8,11 +8,17 @@ import { UP_DISTRICTS, COMPANY } from '@/data';
 import { validateIndianPhone, formatINR, calculateSolar } from '@/utils';
 import { ingestWebsiteCallbackLead } from '@/services/leadIngestion';
 import { useLanguage } from '@/i18n/LanguageContext';
+import { SEOHead } from '@/components/SEOHead';
 import confetti from 'canvas-confetti';
 
 export function HomePage({ onNavigate }: { onNavigate: (page: string) => void }) {
   return (
     <div className="animate-fade-in">
+      <SEOHead
+        title="ABC Solar | Top Solar Rooftop Installer & Subsidy Partner in UP"
+        description="Slash electricity bills by up to 90% with ABC Solar. Turnkey rooftop solar installations, PM Surya Ghar Muft Bijli Yojana & UPNEDA subsidy assistance across Lucknow, Barabanki, Ayodhya, Kanpur & UP."
+        canonical="https://abcsolar.in/"
+      />
       <HeroSection onNavigate={onNavigate} />
       <TrustBentoGrid onNavigate={onNavigate} />
       <ProcessTimeline />

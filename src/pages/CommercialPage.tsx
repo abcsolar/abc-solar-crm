@@ -6,6 +6,7 @@ import {
 import { COMPANY } from '@/data';
 import { formatINR } from '@/utils';
 import { useLanguage } from '@/i18n/LanguageContext';
+import { SEOHead } from '@/components/SEOHead';
 
 export function CommercialPage({ onNavigate }: { onNavigate: (page: string) => void }) {
   const { t, lang } = useLanguage();
@@ -59,8 +60,33 @@ export function CommercialPage({ onNavigate }: { onNavigate: (page: string) => v
     { kw: '500 kW', area: lang === 'hi' ? '50,000 वर्ग फीट' : '50,000 sq.ft', gen: '8,20,000 kWh', save: '₹65,00,000', payback: lang === 'hi' ? '2.6 वर्ष' : '2.6 Years' },
   ];
 
+  const commercialServiceSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: 'Commercial & Industrial Solar EPC in Uttar Pradesh',
+    serviceType: 'Commercial Solar EPC & Net-Metering',
+    provider: {
+      '@type': 'LocalBusiness',
+      name: 'ABC Solar',
+      url: 'https://abcsolar.in',
+    },
+    areaServed: {
+      '@type': 'AdministrativeArea',
+      name: 'Uttar Pradesh',
+    },
+    description:
+      'Turnkey commercial rooftop solar installations for cold storages, rice mills, factories, and schools with MVVNL & PuVVNL net metering and 40% accelerated depreciation.',
+  };
+
   return (
     <div className="animate-fade-in bg-slate-50 min-h-screen">
+      <SEOHead
+        title="Commercial & Industrial Solar EPC Contractor UP | ABC Solar"
+        description="Turnkey rooftop solar solutions for cold storages, rice mills, factories, hospitals & petrol pumps across UP. Net metering under MVVNL, PuVVNL, PVVNL, DVVNL & 40% accelerated depreciation."
+        canonical="https://abcsolar.in/commercial"
+        keywords="commercial solar EPC contractor Uttar Pradesh, solar for cold storage UP, solar power plant rice mill Barabanki, industrial solar net metering MVVNL, 100kW rooftop solar cost UP"
+        schemas={[commercialServiceSchema]}
+      />
       {/* Hero Header */}
       <section className="bg-slate-950 text-white py-14 relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(#F59E0B_1px,transparent_1px)] [background-size:24px_24px] opacity-15 pointer-events-none" />

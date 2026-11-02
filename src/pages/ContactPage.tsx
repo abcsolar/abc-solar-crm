@@ -9,6 +9,7 @@ import { createLeadFromForm } from '@/seed';
 import { addLead } from '@/store';
 import confetti from 'canvas-confetti';
 import { useLanguage } from '@/i18n/LanguageContext';
+import { SEOHead } from '@/components/SEOHead';
 
 export function ContactPage() {
   const { t, lang } = useLanguage();
@@ -38,8 +39,38 @@ export function ContactPage() {
     confetti({ particleCount: 90, spread: 70, origin: { y: 0.65 }, colors: ['#F59E0B', '#0F766E', '#10B981'] });
   }
 
+  const contactSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'ContactPage',
+    name: 'Contact ABC Solar',
+    url: 'https://abcsolar.in/contact',
+    description:
+      'Official contact page for ABC Solar (Avadh Boring Company). Contact details for free solar site survey, PM Surya Ghar subsidy application, and commercial EPC consultation in Uttar Pradesh.',
+    mainEntity: {
+      '@type': 'LocalBusiness',
+      name: 'ABC Solar',
+      telephone: '+91-9278442418',
+      email: 'abc.solar7575@gmail.com',
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: 'AN-25, Lauta Bagh, Azad Nagar, Nawabganj',
+        addressLocality: 'Barabanki',
+        addressRegion: 'Uttar Pradesh',
+        postalCode: '225001',
+        addressCountry: 'IN',
+      },
+    },
+  };
+
   return (
     <div className="animate-fade-in bg-slate-50 min-h-screen">
+      <SEOHead
+        title="Contact ABC Solar | Book Free Rooftop Solar Survey in UP"
+        description="Get in touch with ABC Solar (Avadh Boring Company) in Barabanki, UP. Call +91 9278442418 or request a free site measurement and DISCOM solar feasibility survey."
+        canonical="https://abcsolar.in/contact"
+        keywords="contact ABC Solar, solar vendor Barabanki phone number, solar company Lucknow contact, book solar site survey UP, Avadh Boring Company solar office"
+        schemas={[contactSchema]}
+      />
       {/* Header */}
       <section className="bg-slate-950 text-white py-14 relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(#F59E0B_1px,transparent_1px)] [background-size:24px_24px] opacity-15 pointer-events-none" />

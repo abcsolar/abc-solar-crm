@@ -18,6 +18,7 @@ import { SurveysPage } from '@/pages/crm/SurveysPage';
 import { WhatsAppPage } from '@/pages/crm/WhatsAppPage';
 import { ProjectsPage } from '@/pages/crm/ProjectsPage';
 import { SettingsPage } from '@/pages/crm/SettingsPage';
+import { SEOHead } from '@/components/SEOHead';
 
 type AppView = 'website' | 'staff-login' | 'crm';
 
@@ -113,6 +114,7 @@ function App() {
     const allowedPage = session.allowedPages.includes(crmPage) ? crmPage : 'dashboard';
     return (
       <div className="min-h-screen bg-slate-50 flex print:bg-white print:block print:min-h-0 print:p-0">
+        <SEOHead title="Staff Operations Portal | ABC Solar CRM" noindex={true} />
         <CrmSidebar currentPage={allowedPage} onNavigate={navigateCrm} allowedPages={session.allowedPages} />
         <div className="flex-1 flex flex-col min-w-0 print:block print:p-0 print:m-0">
           <CrmTopbar

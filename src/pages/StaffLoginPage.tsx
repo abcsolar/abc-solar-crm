@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Sun, Lock, Mail, Eye, EyeOff, Shield, ArrowRight, Zap } from 'lucide-react';
 import { login, useUsers } from '@/store';
 import { cn } from '@/utils/cn';
+import { SEOHead } from '@/components/SEOHead';
 
 export function StaffLoginPage({ onSuccess }: { onSuccess: () => void }) {
   const [email, setEmail] = useState('');
@@ -40,6 +41,7 @@ export function StaffLoginPage({ onSuccess }: { onSuccess: () => void }) {
 
   return (
     <div className="min-h-screen bg-[#0F172A] flex flex-col items-center justify-center p-4">
+      <SEOHead title="Staff Login | ABC Solar CRM Operations" noindex={true} />
       {/* Subtle background texture */}
       <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-[#0F172A] to-teal-950/20 pointer-events-none" />
 

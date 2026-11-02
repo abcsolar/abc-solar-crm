@@ -6,6 +6,7 @@ import {
 import { COMPANY } from '@/data';
 import { formatINR } from '@/utils';
 import { useLanguage } from '@/i18n/LanguageContext';
+import { SEOHead } from '@/components/SEOHead';
 
 export function SubsidyPage() {
   const { t, lang } = useLanguage();
@@ -117,8 +118,45 @@ export function SubsidyPage() {
     },
   ];
 
+  const subsidyHowToSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: 'How to Claim PM Surya Ghar Rooftop Solar Subsidy in Uttar Pradesh',
+    description:
+      'Step-by-step procedure to get up to ₹1,08,000 solar subsidy via PM Surya Ghar National Portal and UPNEDA in UP.',
+    step: [
+      {
+        '@type': 'HowToStep',
+        name: 'Portal Registration & Application',
+        text: 'Register with consumer CA number on PM Surya Ghar portal and select ABC Solar (Vendor Code: BBK2508133242).',
+      },
+      {
+        '@type': 'HowToStep',
+        name: 'Technical Feasibility Approval',
+        text: 'DISCOM reviews sanctioned load and approves net-metering feasibility within 7-10 days.',
+      },
+      {
+        '@type': 'HowToStep',
+        name: 'Turnkey Installation & Meter Sync',
+        text: 'ABC Solar installs tier-1 mono-PERC bifacial panels and coordinates bi-directional meter testing with the power department.',
+      },
+      {
+        '@type': 'HowToStep',
+        name: 'Direct DBT Bank Subsidy Release',
+        text: 'Commissioning certificate uploaded to portal; Central (₹78k) and State (₹30k) subsidy credits to your Aadhaar-linked bank account.',
+      },
+    ],
+  };
+
   return (
     <div className="animate-fade-in bg-slate-50 min-h-screen">
+      <SEOHead
+        title="PM Surya Ghar & UPNEDA Solar Subsidy Guide UP | ABC Solar"
+        description="Complete guide to PM Surya Ghar Muft Bijli Yojana and UPNEDA state solar subsidies in Uttar Pradesh. Claim up to ₹1,08,000 direct subsidy, check required documents and 4-step application process."
+        canonical="https://abcsolar.in/subsidy"
+        keywords="PM Surya Ghar subsidy UP, UPNEDA solar subsidy 2026, solar panel subsidy Uttar Pradesh, PM Surya Ghar documents required, 3kW solar subsidy amount Barabanki Lucknow"
+        schemas={[subsidyHowToSchema]}
+      />
       {/* Header */}
       <section className="bg-slate-950 text-white py-14 relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(#F59E0B_1px,transparent_1px)] [background-size:24px_24px] opacity-15 pointer-events-none" />
